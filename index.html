@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MEMES · MUSGO</title>
+  <style>
+    :root{--f:#ff55c8;--negro:#050505;--gris:#b8b8b8}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--f);color:#fff;font-family:"Courier New",monospace;padding:14px}
+    main{max-width:900px;margin:auto;background:var(--negro);border:3px solid #111;box-shadow:8px 8px 0 #6f064e;padding:16px}
+    h1{margin:0 0 5px;color:var(--f);font-size:clamp(1.5rem,7vw,3rem);letter-spacing:.14em}
+    .bajada{margin:0 0 18px;color:var(--gris);font-size:.88rem}
+    h2{font-size:1rem;letter-spacing:.16em;border-bottom:1px dashed #555;padding-bottom:7px;color:#fff}
+    .recientes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+    .recientes a{display:block;background:#111;border:1px solid #444;aspect-ratio:1/1;overflow:hidden}
+    .recientes img{width:100%;height:100%;object-fit:cover;display:block}
+    button{width:100%;padding:12px;background:var(--f);border:2px solid #fff;color:#000;font:700 .9rem "Courier New",monospace;letter-spacing:.08em;cursor:pointer}
+    #archivo{display:none;margin-top:16px}
+    #archivo.abierto{display:block}
+    .galeria{columns:2 170px;column-gap:12px}
+    figure{break-inside:avoid;margin:0 0 12px;background:#111;border:1px solid #444;padding:7px}
+    figure img{width:100%;height:auto;display:block}
+    figcaption{font-size:.69rem;color:#aaa;padding-top:6px;overflow-wrap:anywhere}
+    .estado{padding:18px;border:1px dashed #666;color:#bbb;text-align:center}
+    @media(max-width:480px){body{padding:8px}main{padding:12px}.recientes{grid-template-columns:repeat(3,1fr);gap:5px}.galeria{columns:2 130px}}
+  </style>
+</head>
+<body>
+<main>
+  <h1>MEMES</h1>
+  <p class="bajada">archivo visual de musgo · lo último arriba</p>
+  <h2>RECIENTES</h2>
+  <div id="recientes" class="recientes"><div class="estado">cargando...</div></div>
+  <button id="abrir" type="button">ABRIR ARCHIVO COMPLETO</button>
+  <section id="archivo">
+    <h2>ARCHIVO COMPLETO</h2>
+    <div id="galeria" class="galeria"></div>
+  </section>
+</main>
+<script>
+const recientes=document.querySelector('#recientes');
+const galeria=document.querySelector('#galeria');
+const archivo=document.querySelector('#archivo');
+const abrir=document.querySelector('#abrir');
+
+function fechaBonita(valor){
+  if(!valor)return '';
+  try{return new Intl.DateTimeFormat('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'}).format(new Date(valor));}
+  catch{return ''}
+}
+function ruta(item){return item.url || './'+item.path.split('/').map(encodeURIComponent).join('/');}
+function nombre(item){return item.name || (item.path ? item.path.split('/').pop() : 'meme');}
+function tarjeta(item,mini=false){
+  const a=document.createElement('a');
+  a.href=ruta(item);a.target='_blank';a.rel='noopener';
+  const img=document.createElement('img');img.src=ruta(item);img.alt=item.alt||nombre(item);img.loading='lazy';
+  a.appendChild(img);
+  if(mini)return a;
+  const fig=document.createElement('figure');fig.appendChild(a);
+  const cap=document.createElement('figcaption');cap.textContent=[fechaBonita(item.date),nombre(item)].filter(Boolean).join(' · ');
+  fig.appendChild(cap);return fig;
+}
+async function cargar(){
+  try{
+    const sello='?v='+Date.now();
+    const [catalogo,semillas]=await Promise.all([
+      fetch('./memes.json'+sello,{cache:'no-store'}).then(r=>r.ok?r.json():[]),
+      fetch('./semillas.json'+sello,{cache:'no-store'}).then(r=>r.ok?r.json():[])
+    ]);
+    const items=[...catalogo,...semillas].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+    recientes.innerHTML='';galeria.innerHTML='';
+    if(!items.length){recientes.innerHTML='<div class="estado">todavía no hay memes</div>';return;}
+    items.slice(0,6).forEach(x=>recientes.appendChild(tarjeta(x,true)));
+    items.forEach(x=>galeria.appendChild(tarjeta(x,false)));
+  }catch(e){recientes.innerHTML='<div class="estado">no se pudo cargar el archivo</div>';}
+}
+abrir.addEventListener('click',()=>{
+  archivo.classList.toggle('abierto');
+  abrir.textContent=archivo.classList.contains('abierto')?'CERRAR ARCHIVO':'ABRIR ARCHIVO COMPLETO';
+});
+cargar();
+</script>
+</body>
+</html>
