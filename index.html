@@ -43,32 +43,24 @@ const recientes=document.querySelector('#recientes');
 const galeria=document.querySelector('#galeria');
 const archivo=document.querySelector('#archivo');
 const abrir=document.querySelector('#abrir');
+const extensiones=/\.(png|jpe?g|webp|gif|avif)$/i;
 
-function fechaBonita(valor){
-  if(!valor)return '';
-  try{return new Intl.DateTimeFormat('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'}).format(new Date(valor));}
-  catch{return ''}
-}
-function ruta(item){return item.url || './'+item.path.split('/').map(encodeURIComponent).join('/');}
-function nombre(item){return item.name || (item.path ? item.path.split('/').pop() : 'meme');}
+function nombre(item){return item.name || 'meme';}
 function tarjeta(item,mini=false){
   const a=document.createElement('a');
-  a.href=ruta(item);a.target='_blank';a.rel='noopener';
-  const img=document.createElement('img');img.src=ruta(item);img.alt=item.alt||nombre(item);img.loading='lazy';
+  a.href=item.download_url;a.target='_blank';a.rel='noopener';
+  const img=document.createElement('img');img.src=item.download_url;img.alt=nombre(item);img.loading='lazy';
   a.appendChild(img);
   if(mini)return a;
   const fig=document.createElement('figure');fig.appendChild(a);
-  const cap=document.createElement('figcaption');cap.textContent=[fechaBonita(item.date),nombre(item)].filter(Boolean).join(' · ');
+  const cap=document.createElement('figcaption');cap.textContent=nombre(item);
   fig.appendChild(cap);return fig;
 }
 async function cargar(){
   try{
-    const sello='?v='+Date.now();
-    const [catalogo,semillas]=await Promise.all([
-      fetch('./memes.json'+sello,{cache:'no-store'}).then(r=>r.ok?r.json():[]),
-      fetch('./semillas.json'+sello,{cache:'no-store'}).then(r=>r.ok?r.json():[])
-    ]);
-    const items=[...catalogo,...semillas].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+    const r=await fetch('https://api.github.com/repos/dvasquezm96-ai/musgo-memes/contents/memes?ref=main',{cache:'no-store'});
+    const data=r.ok?await r.json():[];
+    const items=data.filter(x=>x.type==='file'&&extensiones.test(x.name)).sort((a,b)=>b.name.localeCompare(a.name));
     recientes.innerHTML='';galeria.innerHTML='';
     if(!items.length){recientes.innerHTML='<div class="estado">todavía no hay memes</div>';return;}
     items.slice(0,6).forEach(x=>recientes.appendChild(tarjeta(x,true)));
