@@ -44,6 +44,10 @@ const galeria=document.querySelector('#galeria');
 const archivo=document.querySelector('#archivo');
 const abrir=document.querySelector('#abrir');
 const extensiones=/\.(png|jpe?g|webp|gif|avif)$/i;
+const semillas=[
+  {name:'musgo-meme-sapo-charango.webp',download_url:'https://chicxmusgo.neocities.org/musgo-meme-sapo-charango.webp'},
+  {name:'musgo-meme-hormigas.webp',download_url:'https://chicxmusgo.neocities.org/musgo-meme-hormigas.webp'}
+];
 
 function nombre(item){return item.name || 'meme';}
 function tarjeta(item,mini=false){
@@ -60,12 +64,18 @@ async function cargar(){
   try{
     const r=await fetch('https://api.github.com/repos/dvasquezm96-ai/musgo-memes/contents/memes?ref=main',{cache:'no-store'});
     const data=r.ok?await r.json():[];
-    const items=data.filter(x=>x.type==='file'&&extensiones.test(x.name)).sort((a,b)=>b.name.localeCompare(a.name));
+    const subidos=data.filter(x=>x.type==='file'&&extensiones.test(x.name)).sort((a,b)=>b.name.localeCompare(a.name));
+    const nombres=new Set(subidos.map(x=>x.name));
+    const items=[...subidos,...semillas.filter(x=>!nombres.has(x.name))];
     recientes.innerHTML='';galeria.innerHTML='';
     if(!items.length){recientes.innerHTML='<div class="estado">todavía no hay memes</div>';return;}
     items.slice(0,6).forEach(x=>recientes.appendChild(tarjeta(x,true)));
     items.forEach(x=>galeria.appendChild(tarjeta(x,false)));
-  }catch(e){recientes.innerHTML='<div class="estado">no se pudo cargar el archivo</div>';}
+  }catch(e){
+    recientes.innerHTML='';galeria.innerHTML='';
+    semillas.forEach(x=>recientes.appendChild(tarjeta(x,true)));
+    semillas.forEach(x=>galeria.appendChild(tarjeta(x,false)));
+  }
 }
 abrir.addEventListener('click',()=>{
   archivo.classList.toggle('abierto');
