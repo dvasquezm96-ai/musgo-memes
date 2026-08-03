@@ -1,0 +1,44 @@
+name: Assemble meme uploads
+
+on:
+  push:
+    paths:
+      - "_uploads/READY"
+
+permissions:
+  contents: write
+
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rebuild uploaded memes
+        shell: bash
+        run: |
+          if [ ! -f _uploads/READY ]; then
+            exit 0
+          fi
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64
+
+          source = Path('_uploads')
+          destination = Path('memes')
+          destination.mkdir(exist_ok=True)
+
+          groups = {}
+          for part in sorted(source.glob('*.part*.b64')):
+              filename = part.name.split('.part', 1)[0]
+              groups.setdefault(filename, []).append(part)
+
+          for filename, parts in groups.items():
+              encoded = ''.join(p.read_text().strip() for p in sorted(parts))
+              (destination / filename).write_bytes(base64.b64decode(encoded))
+          PY
+          rm -rf _uploads
+          git config user.name "MUSGO bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add memes _uploads
+          git commit -m "Publicar seis memes nuevos" || exit 0
+          git push
