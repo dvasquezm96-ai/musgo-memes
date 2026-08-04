@@ -1,87 +1,2261 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>MEMES · MUSGO</title>
-  <style>
-    :root{--f:#ff55c8;--negro:#050505;--gris:#b8b8b8}
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--f);color:#fff;font-family:"Courier New",monospace;padding:14px}
-    main{max-width:900px;margin:auto;background:var(--negro);border:3px solid #111;box-shadow:8px 8px 0 #6f064e;padding:16px}
-    h1{margin:0 0 5px;color:var(--f);font-size:clamp(1.5rem,7vw,3rem);letter-spacing:.14em}
-    .bajada{margin:0 0 18px;color:var(--gris);font-size:.88rem}
-    h2{font-size:1rem;letter-spacing:.16em;border-bottom:1px dashed #555;padding-bottom:7px;color:#fff}
-    .recientes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
-    .recientes a{display:block;background:#111;border:1px solid #444;aspect-ratio:1/1;overflow:hidden}
-    .recientes img{width:100%;height:100%;object-fit:cover;display:block}
-    button{width:100%;padding:12px;background:var(--f);border:2px solid #fff;color:#000;font:700 .9rem "Courier New",monospace;letter-spacing:.08em;cursor:pointer}
-    #archivo{display:none;margin-top:16px}
-    #archivo.abierto{display:block}
-    .galeria{columns:2 170px;column-gap:12px}
-    figure{break-inside:avoid;margin:0 0 12px;background:#111;border:1px solid #444;padding:7px}
-    figure img{width:100%;height:auto;display:block}
-    figcaption{font-size:.69rem;color:#aaa;padding-top:6px;overflow-wrap:anywhere}
-    .estado{padding:18px;border:1px dashed #666;color:#bbb;text-align:center}
-    @media(max-width:480px){body{padding:8px}main{padding:12px}.recientes{grid-template-columns:repeat(3,1fr);gap:5px}.galeria{columns:2 130px}}
-  </style>
-</head>
-<body>
-<main>
-  <h1>MEMES</h1>
-  <p class="bajada">archivo visual de musgo · lo último arriba</p>
-  <h2>RECIENTES</h2>
-  <div id="recientes" class="recientes"><div class="estado">cargando...</div></div>
-  <button id="abrir" type="button">ABRIR ARCHIVO COMPLETO</button>
-  <section id="archivo">
-    <h2>ARCHIVO COMPLETO</h2>
-    <div id="galeria" class="galeria"></div>
-  </section>
-</main>
-<script>
-const recientes=document.querySelector('#recientes');
-const galeria=document.querySelector('#galeria');
-const archivo=document.querySelector('#archivo');
-const abrir=document.querySelector('#abrir');
-const extensiones=/\.(png|jpe?g|webp|gif|avif)$/i;
-const semillas=[
-  {name:'musgo-meme-sapo-charango.webp',download_url:'https://chicxmusgo.neocities.org/musgo-meme-sapo-charango.webp'},
-  {name:'musgo-meme-hormigas.webp',download_url:'https://chicxmusgo.neocities.org/musgo-meme-hormigas.webp'}
-];
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="MUSGO — portada, entradas, memes y sustrato." name="description"/>
+<title>MUSGO</title>
+<style>
+    :root {
+      --negro: #000;
+      --fondo: #070707;
+      --fondo-2: #0b0b0b;
+      --texto: #f1f1ed;
+      --apagado: #777;
+      --borde: #303030;
+      --rosa: #ff66cc;
+      --verde: #9dff8d;
+    }
 
-function nombre(item){return item.name || 'meme';}
-function tarjeta(item,mini=false){
-  const a=document.createElement('a');
-  a.href=item.download_url;a.target='_blank';a.rel='noopener';
-  const img=document.createElement('img');img.src=item.download_url;img.alt=nombre(item);img.loading='lazy';
-  a.appendChild(img);
-  if(mini)return a;
-  const fig=document.createElement('figure');fig.appendChild(a);
-  const cap=document.createElement('figcaption');cap.textContent=nombre(item);
-  fig.appendChild(cap);return fig;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 15% 10%, rgba(255, 102, 204, 0.035), transparent 28rem),
+        radial-gradient(circle at 90% 85%, rgba(157, 255, 141, 0.025), transparent 30rem),
+        var(--negro);
+      color: var(--texto);
+      font-family: "Courier New", Courier, monospace;
+      line-height: 1.62;
+      padding: 25px;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.07;
+      z-index: 999;
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          rgba(255,255,255,0.08) 0,
+          rgba(255,255,255,0.08) 1px,
+          transparent 1px,
+          transparent 4px
+        );
+      mix-blend-mode: soft-light;
+    }
+
+    ::selection {
+      background: var(--rosa);
+      color: #000;
+    }
+
+    a {
+      color: var(--rosa);
+      text-decoration: none;
+    }
+
+    a:hover,
+    a:focus-visible {
+      color: #fff;
+      text-decoration: underline;
+    }
+
+    button,
+    summary,
+    a,
+    video {
+      outline-color: var(--rosa);
+      outline-offset: 4px;
+    }
+
+    header {
+      max-width: 1400px;
+      margin: 0 auto 7px;
+      border: 1px solid var(--borde);
+      padding: 7px 10px;
+      background: rgba(7, 7, 7, 0.96);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      overflow: hidden;
+    }
+
+    header::after {
+      content: "archivo vivo / no terminado";
+      order: 2;
+      color: #555;
+      font-size: 0.62rem;
+      letter-spacing: 0.09rem;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    header h1 {
+      order: 1;
+      font-size: clamp(1.15rem, 2.6vw, 1.65rem);
+      line-height: 1;
+      color: var(--rosa);
+      letter-spacing: 0.15em;
+      font-weight: normal;
+      text-align: left;
+    }
+
+    .fecha-recuadro {
+      order: 3;
+      position: static;
+      margin-left: auto;
+      border: 1px dashed #555;
+      padding: 2px 7px;
+      background: #000;
+      font-size: 0.68rem;
+      color: var(--rosa);
+      white-space: nowrap;
+    }
+
+    .estado {
+      max-width: 1400px;
+      margin: 0 auto 7px;
+      border-left: 1px solid var(--rosa);
+      padding: 3px 8px;
+      color: #747474;
+      font-size: 0.68rem;
+    }
+
+    .estado strong {
+      color: var(--texto);
+      font-weight: normal;
+    }
+
+    .portada-feed {
+      max-width: 1400px;
+      margin: 0 auto 10px;
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      grid-template-rows: repeat(4, 130px);
+      gap: 8px;
+    }
+
+    .portada-feed figure {
+      position: relative;
+      overflow: hidden;
+      background: #030303;
+      border: 1px solid #292929;
+      min-width: 0;
+    }
+
+    .portada-feed img,
+    .portada-feed video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: saturate(0.92) contrast(1.04);
+    }
+
+    .portada-feed video {
+      background: #000;
+    }
+
+    .portada-feed figcaption {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 24px 9px 7px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.88));
+      color: #d2d2cf;
+      font-size: 0.68rem;
+      letter-spacing: 0.02em;
+      pointer-events: none;
+    }
+
+    .portada-feed figcaption span {
+      color: var(--rosa);
+      margin-right: 6px;
+    }
+
+    .pieza-micro { grid-column: 1 / 8; grid-row: 1 / 5; }
+    .pieza-mono  { grid-column: 8 / 13; grid-row: 1 / 3; }
+    .pieza-luz   { grid-column: 8 / 13; grid-row: 3 / 5; }
+    .pieza-muro  { grid-column: 1 / 7; grid-row: 5 / 7; }
+    .pieza-video { grid-column: 7 / 13; grid-row: 5 / 7; }
+
+    .pieza-micro img { object-position: center 68%; }
+    .pieza-muro img { object-position: center 52%; }
+    .pieza-luz img,
+    .pieza-mono img {
+      object-fit: contain;
+      background: #000;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.45fr) minmax(0, 0.95fr);
+      gap: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+      align-items: start;
+    }
+
+    .column,
+    .box {
+      background: rgba(8, 8, 8, 0.95);
+      border: 1px solid var(--borde);
+      padding: 18px;
+      min-width: 0;
+    }
+
+    .column {
+      min-height: 500px;
+    }
+
+    .column h2,
+    .box h2 {
+      color: var(--rosa);
+      margin-bottom: 15px;
+      border-bottom: 1px solid var(--borde);
+      padding-bottom: 8px;
+      font-size: 0.78rem;
+      font-weight: normal;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .declaracion {
+      color: #a6a6a6;
+      border: 1px dashed #2d2d2d;
+      padding: 12px;
+      margin-bottom: 24px;
+      font-size: 0.88rem;
+    }
+
+    .declaracion::before {
+      content: "[nota]";
+      display: block;
+      color: var(--verde);
+      margin-bottom: 8px;
+      font-size: 0.74rem;
+    }
+
+    .blog-post {
+      margin-bottom: 22px;
+      padding-bottom: 15px;
+      border-bottom: 1px dashed var(--borde);
+    }
+
+    .blog-post h3 {
+      color: #fff;
+      font-size: 1rem;
+      margin-bottom: 5px;
+      font-weight: normal;
+    }
+
+    .date,
+    .post-date {
+      color: var(--apagado);
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+    }
+
+    .blog-post .date {
+      margin-bottom: 8px;
+    }
+
+    .archive-section {
+      margin-top: 25px;
+    }
+
+    .archive-section h3 {
+      color: var(--rosa);
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+      font-weight: normal;
+    }
+
+    .archive-list {
+      list-style: none;
+    }
+
+    .archive-item {
+      font-size: 0.84rem;
+      margin-bottom: 10px;
+      overflow-wrap: anywhere;
+    }
+
+    .archive-date {
+      color: var(--apagado);
+      margin-right: 8px;
+    }
+
+    .fragmento-texto {
+      margin: 10px 2px 26px;
+      padding: 7px 5px 22px;
+      color: #d7d7d2;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(0.96rem, 1.25vw, 1.08rem);
+      line-height: 1.78;
+      text-wrap: pretty;
+    }
+
+    .fragmento-texto p + p {
+      margin-top: 1.35em;
+    }
+
+    .fragmento-texto::after {
+      content: "";
+      display: block;
+      width: 38%;
+      max-width: 150px;
+      margin-top: 20px;
+      border-bottom: 1px solid #282828;
+    }
+
+    .post-card {
+      border: 1px solid var(--borde);
+      margin-bottom: 22px;
+      background: #050505;
+      transition: border-color 140ms ease;
+    }
+
+    .post-card:hover,
+    .post-card[open] {
+      border-color: #575757;
+    }
+
+    .post-card summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 12px;
+    }
+
+    .post-card summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .post-card summary::after {
+      content: "[abrir]";
+      color: #565656;
+      font-size: 0.72rem;
+      display: block;
+      margin-top: 9px;
+      text-align: right;
+    }
+
+    .post-card[open] summary::after {
+      content: "[cerrar]";
+      color: var(--rosa);
+    }
+
+    .post-title {
+      display: block;
+      color: var(--rosa);
+      font-size: 1.02rem;
+      margin: 6px 0 10px;
+      letter-spacing: 0.08em;
+      overflow-wrap: anywhere;
+    }
+
+    .post-preview {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border: 1px solid #444;
+      filter: grayscale(55%) contrast(1.08);
+      display: block;
+      transition: filter 180ms ease, border-color 180ms ease;
+    }
+
+    .post-preview.vertical {
+      object-position: center 42%;
+    }
+
+    .post-card summary:hover .post-preview {
+      filter: grayscale(8%) contrast(1.02);
+      border-color: var(--rosa);
+    }
+
+    .post-card[open] .post-preview {
+      display: none;
+    }
+
+    .text-preview {
+      min-height: 115px;
+      border: 1px solid #333;
+      padding: 14px;
+      display: grid;
+      align-content: center;
+      color: #929292;
+      background:
+        linear-gradient(110deg, transparent 0 48%, rgba(255,255,255,.025) 49% 51%, transparent 52%);
+    }
+
+    .post-content {
+      padding: 14px;
+      border-top: 1px dashed var(--borde);
+    }
+
+    .post-content img,
+    .post-content video {
+      width: 100%;
+      max-height: 640px;
+      object-fit: contain;
+      border: 1px solid var(--rosa);
+      margin-bottom: 14px;
+      display: block;
+      background: #000;
+    }
+
+    .post-content video {
+      max-height: 560px;
+    }
+
+    .post-content p {
+      margin-bottom: 12px;
+    }
+
+    .post-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    .post-content .susurro {
+      color: #8c8c8c;
+      font-size: 0.86rem;
+      border-left: 1px solid #444;
+      padding-left: 10px;
+    }
+
+    .missing-media {
+      border: 1px dashed #333;
+      color: #666;
+      padding: 22px;
+      margin-bottom: 12px;
+      text-align: center;
+      font-size: 0.78rem;
+    }
+
+    .right-column {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .fragmento {
+      margin-bottom: 20px;
+    }
+
+    .fragmento:last-child {
+      margin-bottom: 0;
+    }
+
+    .fragmento img {
+      width: 100%;
+      display: block;
+      border: 1px solid #3e3e3e;
+      filter: grayscale(25%) contrast(1.08);
+    }
+
+    .fragmento:nth-child(even) img {
+      transform: rotate(0.45deg);
+    }
+
+    .fragmento figcaption {
+      color: #858585;
+      font-size: 0.78rem;
+      margin-top: 8px;
+    }
+
+    .fragmento figcaption::before {
+      content: "↳ ";
+      color: var(--rosa);
+    }
+
+    .youtube-frame {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border: 1px solid #444;
+      display: block;
+    }
+
+    .marca {
+      color: #444;
+      font-size: 0.72rem;
+      overflow-wrap: anywhere;
+      margin-top: 12px;
+    }
+
+    footer {
+      max-width: 1200px;
+      margin: 30px auto 0;
+      border-top: 1px solid #222;
+      padding-top: 12px;
+      color: #555;
+      font-size: 0.78rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .parpadeo {
+      animation: blink 1.7s steps(2, start) infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0.25; }
+    }
+
+
+    .post-actual {
+      max-width: 1400px;
+      margin: 12px auto 22px;
+      border: 1px solid #3a3a3a;
+      background:
+        linear-gradient(135deg, rgba(255,102,204,.025), transparent 32%),
+        #050505;
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .post-actual::before {
+      content: "entrada nueva";
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      color: #555;
+      font-size: .62rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .post-actual-meta {
+      color: var(--rosa);
+      font-size: .68rem;
+      letter-spacing: .08em;
+      margin-bottom: 7px;
+    }
+
+    .post-actual h2 {
+      font-size: clamp(1rem, 3vw, 1.45rem);
+      font-weight: normal;
+      letter-spacing: .08em;
+      margin: 0 0 13px;
+      max-width: 80%;
+    }
+
+    .foto-modulo {
+      margin: 0;
+    }
+
+    .foto-modulo img {
+      width: 100%;
+      display: block;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      object-position: center 48%;
+      border: 1px solid #333;
+    }
+
+    .foto-modulo figcaption {
+      color: #999;
+      font-size: .68rem;
+      padding: 7px 1px 0;
+    }
+
+    .post-actual-nota {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: start;
+      margin: 14px 0 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px dashed #292929;
+    }
+
+    .post-actual-nota p {
+      max-width: 760px;
+      color: #d3d3cf;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(.94rem, 1.4vw, 1.08rem);
+      line-height: 1.62;
+    }
+
+    .post-actual-nota .susurro {
+      color: #7d7d7d;
+      font-family: "Courier New", monospace;
+      font-size: .75rem;
+      margin-top: 6px;
+    }
+
+    .marca-solar {
+      width: 46px;
+      opacity: .48;
+      padding-top: 2px;
+    }
+
+    .marca-solar svg {
+      width: 100%;
+      display: block;
+      stroke: var(--verde);
+      fill: none;
+      stroke-width: 1.4;
+    }
+
+    .post-actual-abajo {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(220px, .8fr);
+      gap: 15px;
+      align-items: stretch;
+    }
+
+    .fragmento-escondido,
+    .escuchando-ahora {
+      border: 1px dashed #303030;
+      padding: 11px;
+      min-width: 0;
+    }
+
+    .fragmento-escondido {
+      display: grid;
+      grid-template-columns: 125px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+    }
+
+    .fragmento-escondido img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      opacity: .72;
+      filter: grayscale(25%) contrast(1.04);
+      border: 1px solid #2d2d2d;
+      transition: opacity .15s ease;
+    }
+
+    .fragmento-escondido:hover img {
+      opacity: 1;
+    }
+
+    .fragmento-escondido p {
+      color: #cfcfcb;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: .82rem;
+      line-height: 1.5;
+      margin-bottom: 6px;
+    }
+
+    .fragmento-escondido a,
+    .escuchando-ahora h3 {
+      color: var(--rosa);
+      font-size: .7rem;
+      letter-spacing: .07em;
+      font-weight: normal;
+    }
+
+    .escuchando-ahora ul {
+      list-style: none;
+      margin-top: 7px;
+    }
+
+    .escuchando-ahora li {
+      color: #a5a5a0;
+      font-size: .68rem;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .fragmento-card .text-preview {
+      min-height: 85px;
+      font-family: Georgia, "Times New Roman", serif;
+      line-height: 1.55;
+    }
+
+    .fragmento-card .fragmento-texto {
+      margin: 0;
+      padding: 16px;
+      border-top: 1px dashed var(--borde);
+    }
+
+
+    .galeria-detalles {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .detalle-corto {
+      margin: 0;
+      border: 1px solid #2d2d2d;
+      background: #040404;
+      min-width: 0;
+    }
+
+    .detalle-corto img {
+      width: 100%;
+      display: block;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+    }
+
+    .detalle-corto:nth-child(3) {
+      grid-column: 1 / 3;
+    }
+
+    .detalle-corto figcaption {
+      color: #9a9a95;
+      font-size: .66rem;
+      line-height: 1.45;
+      padding: 7px 8px 8px;
+    }
+
+    .estado-vivo {
+      border: 1px dashed #303030;
+      padding: 11px;
+    }
+
+    .estado-vivo h3 {
+      color: var(--rosa);
+      font-size: .7rem;
+      letter-spacing: .07em;
+      font-weight: normal;
+      margin-bottom: 7px;
+    }
+
+    .estado-vivo ul {
+      list-style: none;
+      display: grid;
+      gap: 5px;
+    }
+
+    .estado-vivo li {
+      color: #a5a5a0;
+      font-size: .72rem;
+      line-height: 1.45;
+    }
+
+    .foto-huerta img {
+      object-position: center 56%;
+    }
+
+
+    .lado-notas {
+      display: grid;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .fragmento-vinculado {
+      border: 1px dashed #303030;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 110px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      background: #040404;
+    }
+
+    .fragmento-vinculado img {
+      width: 100%;
+      display: block;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      border: 1px solid #2d2d2d;
+      opacity: .86;
+      filter: contrast(1.03) saturate(.9);
+    }
+
+    .fragmento-vinculado p {
+      color: #cfcfcb;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: .78rem;
+      line-height: 1.45;
+      margin-bottom: 6px;
+    }
+
+    .fragmento-vinculado a {
+      color: var(--rosa);
+      font-size: .68rem;
+      letter-spacing: .07em;
+    }
+
+    @media (max-width: 900px) {
+      body {
+        padding: 12px;
+      }
+
+      .container {
+        grid-template-columns: 1fr;
+      }
+
+      .center-column {
+        order: 1;
+      }
+
+      .left-column {
+        order: 2;
+      }
+
+      .right-column {
+        order: 3;
+      }
+
+      header {
+        gap: 8px;
+        padding: 7px 9px;
+      }
+
+      header::after {
+        display: none;
+      }
+
+      header h1 {
+        font-size: 1.05rem;
+      }
+
+      .fecha-recuadro {
+        font-size: 0.62rem;
+      }
+
+
+      .portada-feed {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: 330px 300px;
+        gap: 6px;
+      }
+
+      .pieza-micro { grid-column: 1 / 3; grid-row: 1 / 2; }
+      .pieza-mono  { grid-column: 1 / 2; grid-row: 2 / 3; }
+      .pieza-luz   { grid-column: 2 / 3; grid-row: 2 / 3; }
+
+      .post-actual {
+        margin-top: 9px;
+        padding: 11px;
+      }
+
+      .post-actual::before {
+        font-size: .55rem;
+        top: 8px;
+        right: 9px;
+      }
+
+      .post-actual h2 {
+        max-width: 72%;
+        font-size: 1rem;
+        margin-bottom: 9px;
+      }
+
+      .foto-modulo img {
+        aspect-ratio: 4 / 3;
+      }
+
+      .post-actual-nota {
+        gap: 8px;
+        margin: 10px 0;
+        padding-bottom: 10px;
+      }
+
+      .post-actual-nota p {
+        font-size: .88rem;
+        line-height: 1.5;
+      }
+
+      .marca-solar {
+        width: 34px;
+      }
+
+      .post-actual-abajo {
+        grid-template-columns: 1fr;
+        gap: 7px;
+      }
+
+      .fragmento-escondido {
+        grid-template-columns: 86px minmax(0, 1fr);
+        gap: 9px;
+        padding: 8px;
+      }
+
+      .fragmento-escondido p {
+        font-size: .74rem;
+        line-height: 1.42;
+      }
+
+      .escuchando-ahora {
+        padding: 8px;
+      }
+
+      .escuchando-ahora ul {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 10px;
+      }
+
+      .escuchando-ahora li {
+        font-size: .62rem;
+      }
+
+
+      .galeria-detalles {
+        gap: 6px;
+      }
+
+      .detalle-corto figcaption {
+        font-size: .61rem;
+        padding: 6px 7px 7px;
+      }
+
+      .estado-vivo {
+        padding: 8px;
+      }
+
+      .estado-vivo li {
+        font-size: .64rem;
+      }
+
+
+      .lado-notas {
+        gap: 6px;
+      }
+
+      .fragmento-vinculado {
+        grid-template-columns: 82px minmax(0, 1fr);
+        gap: 8px;
+        padding: 8px;
+      }
+
+      .fragmento-vinculado p {
+        font-size: .72rem;
+        line-height: 1.38;
+      }
+
+      .center-column h2 {
+        margin-bottom: 7px;
+      }
+
+      .post-card {
+        margin-bottom: 7px;
+      }
+
+      .post-card summary {
+        padding: 8px;
+      }
+
+      .post-title {
+        font-size: .78rem;
+        margin: 3px 0 6px;
+      }
+
+      .post-date {
+        font-size: .62rem;
+      }
+
+      .post-preview {
+        height: 105px;
+        filter: grayscale(68%) contrast(1.06);
+      }
+
+      .post-card summary::after {
+        margin-top: 4px;
+        font-size: .6rem;
+      }
+
+      .column,
+      .box {
+        padding: 10px;
+      }
+
+      .blog-post {
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+      }
+
+      .blog-post p:not(.date) {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        color: #929292;
+        font-size: .72rem;
+      }
+
+      .fragmento img {
+        max-height: 120px;
+        object-fit: cover;
+      }
+
+      .pieza-micro img { object-position: center 68%; }
+      .pieza-luz img,
+      .pieza-mono img { object-fit: contain; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        scroll-behavior: auto !important;
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+
+    .video-enlace {
+      display: grid;
+      gap: 8px;
+      color: var(--rosa);
+      margin-bottom: 14px;
+    }
+
+    .video-enlace img {
+      margin-bottom: 0;
+    }
+
+    .video-enlace span {
+      border: 1px dashed var(--rosa);
+      padding: 8px 10px;
+      width: fit-content;
+      font-size: 0.8rem;
+    }
+  
+
+    /* Entrada actual v0.5 integrada — Resistiendo el invierno */
+    #post-hoy-v05 {
+      --mh-bg: #050505;
+      --mh-fg: #ecece7;
+      --mh-line: #30302d;
+      --mh-pink: #d36ba9;
+      max-width: 1400px;
+      margin: 12px auto 22px;
+      padding: 0 0 4px;
+      color: var(--mh-fg);
+      font-family: "Courier New", monospace;
+      scroll-margin-top: 12px;
+    }
+
+    #post-hoy-v05 a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    #post-hoy-v05 .post {
+      width: min(100%, 920px);
+      margin: 0 auto;
+      border: 1px solid #353532;
+      background: linear-gradient(135deg, rgba(211,107,169,.025), transparent 35%), var(--mh-bg);
+      padding: 12px;
+    }
+
+    #post-hoy-v05 .meta {
+      color: var(--mh-pink);
+      font-size: .65rem;
+      letter-spacing: .08em;
+      margin-bottom: 8px;
+    }
+
+    #post-hoy-v05 .pre-title {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+      height: clamp(190px, 28vw, 270px);
+      margin-bottom: 14px;
+    }
+
+    #post-hoy-v05 .santa-window {
+      min-width: 0;
+      border: 1px dashed var(--mh-line);
+      display: grid;
+      grid-template-rows: 47% 1fr;
+      background: #030303;
+      overflow: hidden;
+    }
+
+    #post-hoy-v05 .santa-window > a:first-child {
+      min-height: 0;
+    }
+
+    #post-hoy-v05 .santa-window img,
+    #post-hoy-v05 .winter-window img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    #post-hoy-v05 .santa-window img {
+      filter: saturate(.78) contrast(1.03);
+      opacity: .85;
+    }
+
+    #post-hoy-v05 .santa-copy {
+      padding: 7px 8px 6px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 4px;
+    }
+
+    #post-hoy-v05 .santa-copy p {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(.59rem, 1.2vw, .75rem);
+      line-height: 1.35;
+      color: #bdbdb7;
+    }
+
+    #post-hoy-v05 .santa-copy a {
+      color: var(--mh-pink);
+      font-size: .58rem;
+      letter-spacing: .05em;
+      width: max-content;
+    }
+
+    #post-hoy-v05 .winter-window {
+      margin: 0;
+      border: 1px solid #2c2c29;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    #post-hoy-v05 .winter-window img {
+      object-position: center 55%;
+    }
+
+    #post-hoy-v05 h1 {
+      font-size: clamp(1.08rem, 3vw, 1.55rem);
+      font-weight: normal;
+      letter-spacing: .09em;
+      margin: 0 0 10px;
+    }
+
+    #post-hoy-v05 .hero {
+      margin: 0;
+      border: 1px solid #30302d;
+      overflow: hidden;
+    }
+
+    #post-hoy-v05 .hero img {
+      width: 100%;
+      display: block;
+      aspect-ratio: 16 / 8.5;
+      object-fit: cover;
+      object-position: center 49%;
+    }
+
+    #post-hoy-v05 .note {
+      padding: 12px 2px 13px;
+      border-bottom: 1px dashed #292926;
+    }
+
+    #post-hoy-v05 .note p {
+      max-width: 760px;
+      font-family: Georgia, "Times New Roman", serif;
+      color: #d4d4ce;
+      font-size: clamp(.88rem, 1.7vw, 1.05rem);
+      line-height: 1.55;
+    }
+
+    #post-hoy-v05 .meme-banner {
+      margin-top: 11px;
+      border: 1px solid #2d2d2a;
+      background: #020202;
+      overflow: hidden;
+    }
+
+    #post-hoy-v05 .meme-banner img {
+      width: 100%;
+      display: block;
+      aspect-ratio: 16 / 9;
+      object-fit: contain;
+      background: #000;
+    }
+
+    #post-hoy-v05 .details-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 7px;
+      margin-top: 7px;
+    }
+
+    #post-hoy-v05 .details-grid figure {
+      margin: 0;
+      min-width: 0;
+      border: 1px solid #2d2d2a;
+      overflow: hidden;
+      background: #020202;
+    }
+
+    #post-hoy-v05 .details-grid img {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 1 / 1;
+      display: block;
+      object-fit: cover;
+    }
+
+    #post-hoy-v05 .fragment {
+      width: min(100%, 920px);
+      margin: 8px auto 0;
+      border: 1px dashed #30302d;
+      padding: 11px 12px;
+      color: #bebeb8;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: .79rem;
+      line-height: 1.5;
+      scroll-margin-top: 10px;
+      background: #030303;
+    }
+
+    #post-hoy-v05 .fragment::before {
+      content: "...";
+      display: block;
+      color: #666;
+      font-family: "Courier New", monospace;
+      margin-bottom: 4px;
+    }
+
+    #post-hoy-v05 .fragment p + p {
+      margin-top: .72em;
+    }
+
+    @media (max-width: 600px) {
+      #post-hoy-v05 {
+        margin-top: 9px;
+      }
+
+      #post-hoy-v05 .post {
+        padding: 8px;
+      }
+
+      #post-hoy-v05 .pre-title {
+        gap: 5px;
+        height: 180px;
+        margin-bottom: 11px;
+      }
+
+      #post-hoy-v05 .santa-window {
+        grid-template-rows: 43% 1fr;
+      }
+
+      #post-hoy-v05 .santa-copy {
+        padding: 5px 6px;
+      }
+
+      #post-hoy-v05 .santa-copy p {
+        font-size: .57rem;
+        line-height: 1.28;
+      }
+
+      #post-hoy-v05 .santa-copy a {
+        font-size: .54rem;
+      }
+
+      #post-hoy-v05 h1 {
+        font-size: 1.02rem;
+        margin-bottom: 8px;
+      }
+
+      #post-hoy-v05 .hero img {
+        aspect-ratio: 4 / 3;
+      }
+
+      #post-hoy-v05 .note {
+        padding: 9px 1px 10px;
+      }
+
+      #post-hoy-v05 .note p {
+        font-size: .84rem;
+        line-height: 1.48;
+      }
+
+      #post-hoy-v05 .meme-banner {
+        margin-top: 8px;
+      }
+
+      #post-hoy-v05 .meme-banner img {
+        aspect-ratio: auto;
+      }
+
+      #post-hoy-v05 .details-grid {
+        gap: 5px;
+        margin-top: 5px;
+      }
+
+      #post-hoy-v05 .fragment {
+        font-size: .73rem;
+        padding: 9px 10px;
+      }
+    }
+
+
+    /* Navegación de superficies */
+    .musgo-nav {
+      max-width: 1400px;
+      margin: 0 auto 10px;
+      border: 1px solid #262626;
+      background: rgba(5,5,5,.96);
+      padding: 6px 9px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: .66rem;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+
+    .musgo-nav a {
+      color: #a5a5a0;
+      padding: 2px 0;
+    }
+
+    .musgo-nav a:hover,
+    .musgo-nav a:focus-visible {
+      color: var(--rosa);
+      text-decoration: none;
+    }
+
+    .musgo-nav .nav-sep {
+      color: #414141;
+      user-select: none;
+    }
+
+    /* Lenguaje visual propio para los memes */
+    .meme-frame {
+      position: relative;
+      margin: 0;
+      padding: 8px 8px 22px;
+      border: 1px solid #b8ae99;
+      outline: 1px solid #24211c;
+      outline-offset: -5px;
+      background: #e9e2d3;
+      box-shadow: 7px 7px 0 #221922;
+      color: #111;
+    }
+
+    .meme-frame::before {
+      content: 'MEME';
+      position: absolute;
+      z-index: 2;
+      top: -7px;
+      left: 10px;
+      padding: 2px 7px 1px;
+      border: 1px solid #111;
+      background: var(--rosa);
+      color: #080808;
+      font: 700 .57rem/1.2 'Courier New', monospace;
+      letter-spacing: .13em;
+      box-shadow: 2px 2px 0 #111;
+    }
+
+    .meme-frame img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: contain;
+      border: 1px solid #191919;
+      background: #000;
+    }
+
+    #post-hoy-v05 .meme-banner {
+      margin: 14px 7px 18px 0;
+      border: 0;
+      overflow: visible;
+      background: transparent;
+    }
+
+    #post-hoy-v05 .meme-banner .meme-frame img {
+      aspect-ratio: auto;
+      object-fit: contain;
+    }
+
+    #post-hoy-v05 .meme-banner a {
+      display: block;
+    }
+
+    /* Archivo general de memes */
+    .meme-archivo {
+      max-width: 1400px;
+      margin: 0 auto 22px;
+      border: 1px solid #343434;
+      background:
+        linear-gradient(125deg, rgba(255,102,204,.04), transparent 38%),
+        #070707;
+      padding: 14px;
+      scroll-margin-top: 12px;
+    }
+
+    .meme-archivo-cabecera {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed #343434;
+    }
+
+    .meme-archivo h2 {
+      color: var(--rosa);
+      font-size: .8rem;
+      font-weight: normal;
+      letter-spacing: .14em;
+    }
+
+    .meme-archivo-cabecera p {
+      color: #696969;
+      font-size: .64rem;
+      text-align: right;
+    }
+
+    .meme-wall {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(240px, .75fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .meme-card {
+      min-width: 0;
+      scroll-margin-top: 14px;
+    }
+
+    .meme-card:nth-child(2) {
+      margin-top: 52px;
+      transform: rotate(.35deg);
+    }
+
+    .meme-card-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 6px 0 8px;
+      color: #72726d;
+      font-size: .63rem;
+    }
+
+    .meme-card-meta a {
+      color: var(--rosa);
+    }
+
+    .meme-card-meta a:hover,
+    .meme-card-meta a:focus-visible {
+      color: #fff;
+    }
+
+    @media (max-width: 760px) {
+      .musgo-nav {
+        margin-bottom: 7px;
+        font-size: .61rem;
+      }
+
+      .meme-frame {
+        padding: 6px 6px 17px;
+        box-shadow: 5px 5px 0 #221922;
+      }
+
+      .meme-archivo {
+        padding: 10px;
+        margin-bottom: 14px;
+      }
+
+      .meme-archivo-cabecera {
+        align-items: flex-start;
+        margin-bottom: 11px;
+      }
+
+      .meme-archivo-cabecera p {
+        max-width: 52%;
+        font-size: .58rem;
+      }
+
+      .meme-wall {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .meme-card:nth-child(2) {
+        margin-top: 0;
+        transform: none;
+      }
+
+      .meme-card-meta {
+        font-size: .59rem;
+      }
+    }
+
+
+    /* v0.13 — los memes toman superficie */
+    .musgo-nav .nav-memes {
+      color: #050505;
+      background: var(--rosa);
+      border: 1px solid var(--rosa);
+      padding: 3px 8px;
+      box-shadow: 3px 3px 0 #3b092c;
+    }
+
+    .musgo-nav .nav-memes:hover,
+    .musgo-nav .nav-memes:focus-visible {
+      color: #050505;
+      background: #fff;
+      border-color: #fff;
+      text-decoration: none;
+    }
+
+    .meme-access {
+      max-width: 1400px;
+      margin: 0 auto 10px;
+      padding: 8px 11px;
+      border: 2px solid var(--rosa);
+      background: #050505;
+      box-shadow: 5px 5px 0 #310824;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      color: var(--rosa);
+      text-decoration: none;
+      letter-spacing: .11em;
+      scroll-margin-top: 10px;
+    }
+
+    .meme-access:hover,
+    .meme-access:focus-visible {
+      background: var(--rosa);
+      color: #050505;
+      text-decoration: none;
+    }
+
+    .meme-access-title {
+      font-size: clamp(.72rem, 1.8vw, .92rem);
+    }
+
+    .meme-access-meta {
+      font-size: .61rem;
+      color: #999;
+      letter-spacing: .06em;
+      white-space: nowrap;
+    }
+
+    .meme-access:hover .meme-access-meta,
+    .meme-access:focus-visible .meme-access-meta {
+      color: #111;
+    }
+
+    .meme-frame {
+      padding: 8px 8px 22px;
+      border: 2px solid var(--rosa);
+      outline: 1px solid #14000e;
+      outline-offset: -6px;
+      background: var(--rosa);
+      box-shadow: 7px 7px 0 #310824;
+      color: #050505;
+    }
+
+    .meme-frame::before {
+      border: 1px solid var(--rosa);
+      background: #050505;
+      color: var(--rosa);
+      box-shadow: 2px 2px 0 var(--rosa);
+    }
+
+    .meme-frame img {
+      border: 1px solid #10000b;
+    }
+
+    .portada-feed .portada-meme {
+      overflow: visible;
+      border: 2px solid var(--rosa);
+      background: var(--rosa);
+      padding: 7px 7px 24px;
+      box-shadow: 7px 7px 0 #310824;
+      z-index: 2;
+    }
+
+    .portada-feed .portada-meme > a {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .portada-feed .portada-meme img {
+      object-fit: contain;
+      background: #000;
+      border: 1px solid #10000b;
+    }
+
+    .portada-feed .portada-meme figcaption {
+      left: 7px;
+      right: 7px;
+      bottom: 0;
+      padding: 20px 7px 5px;
+      color: #050505;
+      background: linear-gradient(transparent, rgba(255,102,204,.96) 58%);
+      font-weight: 700;
+    }
+
+    .portada-feed .portada-meme figcaption span {
+      color: #050505;
+      border: 1px solid #050505;
+      padding: 1px 4px;
+    }
+
+    .meme-archivo {
+      border: 2px solid var(--rosa);
+      box-shadow: 8px 8px 0 #310824;
+      padding: 18px;
+      background:
+        linear-gradient(125deg, rgba(255,102,204,.095), transparent 42%),
+        #070707;
+    }
+
+    .meme-archivo-cabecera {
+      position: relative;
+      align-items: center;
+      padding: 4px 0 12px;
+      border-bottom: 1px solid var(--rosa);
+    }
+
+    .meme-archivo h2 {
+      font-size: clamp(.92rem, 2.4vw, 1.28rem);
+      letter-spacing: .16em;
+    }
+
+    .meme-count {
+      border: 1px solid var(--rosa);
+      color: var(--rosa);
+      padding: 3px 7px;
+      font-size: .58rem;
+      letter-spacing: .1em;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 760px) {
+      .meme-access {
+        margin-bottom: 8px;
+        padding: 7px 8px;
+        box-shadow: 4px 4px 0 #310824;
+      }
+
+      .meme-access-meta {
+        font-size: .54rem;
+      }
+
+      .portada-feed .portada-meme {
+        padding: 5px 5px 20px;
+        box-shadow: 5px 5px 0 #310824;
+      }
+
+      .portada-feed .portada-meme figcaption {
+        left: 5px;
+        right: 5px;
+        font-size: .58rem;
+      }
+
+      .meme-archivo {
+        padding: 11px;
+        box-shadow: 5px 5px 0 #310824;
+      }
+
+      .meme-archivo-cabecera {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 5px 10px;
+      }
+
+      .meme-archivo-cabecera p {
+        grid-column: 1 / -1;
+        max-width: none;
+        text-align: left;
+      }
+    }
+
+
+/* v0.14 preview */
+:root {
+  --musgo-verde: #6b9c33;
+  --musgo-verde-sombra: #243712;
 }
-async function cargar(){
+.musgo-nav .nav-memes { all: unset; }
+.portada-box {
+  position: relative;
+  border: 2px solid var(--musgo-verde);
+  padding: 18px 14px 14px;
+  margin-top: 14px;
+  box-shadow: 7px 7px 0 var(--musgo-verde-sombra);
+  background: linear-gradient(135deg, rgba(107,156,51,.11), transparent 32%), #050505;
+}
+.portada-box .portada-title {
+  position: absolute;
+  top: -14px;
+  left: 14px;
+  background: #050505;
+  color: var(--musgo-verde);
+  border: 2px solid var(--musgo-verde);
+  padding: 2px 10px 3px;
+  letter-spacing: .18em;
+  font-size: .66rem;
+}
+.portada-feed.portada-box {
+  grid-auto-rows: minmax(132px, auto);
+}
+.entradas-wrap {
+  max-width: 1400px;
+  margin: 20px auto 0;
+}
+.entradas-title,
+.sustrato-main-title {
+  margin: 0 0 12px;
+  font-size: .88rem;
+  letter-spacing: .22em;
+  font-weight: 400;
+}
+.meme-frame::before,
+.pieza-mono.meme-frame::before,
+.portada-meme::before {
+  content: none !important;
+  display: none !important;
+}
+.portada-feed .portada-meme figcaption {
+  left: 7px;
+  right: 7px;
+  bottom: 0;
+  padding: 18px 7px 6px;
+  color: #050505;
+  background: linear-gradient(transparent, rgba(255,102,204,.94) 58%);
+}
+.portada-meme-link {
+  color: #050505;
+  text-decoration: none;
+  font-size: .62rem;
+  letter-spacing: .10em;
+}
+.portada-meme-link:hover,
+.portada-meme-link:focus-visible {
+  text-decoration: underline;
+}
+.memes-panel {
+  margin: 0 0 18px;
+  border: 2px solid var(--rosa);
+  padding: 12px;
+  background: linear-gradient(135deg, rgba(255,102,204,.12), transparent 34%), #060606;
+  box-shadow: 7px 7px 0 #310824;
+}
+.memes-panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.memes-panel-title {
+  margin: 0;
+  color: var(--rosa);
+  letter-spacing: .22em;
+  font-size: 1rem;
+}
+.meme-count-lite {
+  color: #b8b8b8;
+  font-size: .62rem;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+.memes-minis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.mini-meme {
+  display: block;
+  border: 2px solid var(--rosa);
+  background: #050505;
+  padding: 4px;
+  box-shadow: 4px 4px 0 #310824;
+}
+.mini-meme img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.memes-foldout {
+  margin-top: 8px;
+}
+.memes-summary {
+  cursor: pointer;
+  color: var(--rosa);
+  letter-spacing: .13em;
+  font-size: .7rem;
+  list-style: none;
+  padding: 5px 8px;
+  border: 1px dashed var(--rosa);
+  background: #070707;
+}
+.memes-summary::-webkit-details-marker { display:none; }
+.memes-full {
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--rosa);
+  color: #050505;
+  border: 2px solid #1f0018;
+}
+.memes-oldschool-top,
+.memes-oldschool-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: .66rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.memes-oldschool-bottom { margin-top: 8px; margin-bottom:0; }
+.memes-oldschool-bottom a,
+.memes-full-meta a { color:#050505; }
+.blinkish {
+  font-weight: 700;
+  border: 1px solid #050505;
+  padding: 2px 6px;
+  box-shadow: 3px 3px 0 #050505;
+  background: #ffd4ef;
+}
+.memes-oldschool-note { opacity: .8; }
+.meme-card-full {
+  background: #050505;
+  border: 2px solid #28011d;
+  padding: 10px;
+  margin-bottom: 14px;
+  box-shadow: 6px 6px 0 #8a1f61;
+}
+.meme-seq {
+  color: var(--rosa);
+  font-size: .66rem;
+  letter-spacing: .22em;
+  margin-bottom: 8px;
+}
+.meme-full-image-link,
+.meme-full-image-link img {
+  display:block;
+  width:100%;
+  height:auto;
+}
+.meme-full-meta {
+  display:flex;
+  justify-content: space-between;
+  align-items:center;
+  gap:12px;
+  color: var(--rosa);
+  margin-top: 8px;
+  font-size: .64rem;
+  letter-spacing: .09em;
+}
+.meme-date { color: #b97da2; }
+.sustrato-wrap {
+  margin-top: 22px;
+}
+.sustrato-wrap .column h2 { display:none; }
+.sustrato-wrap .archive-section h3 {
+  font-size: .72rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+@media (max-width: 760px) {
+  .portada-box { padding: 16px 10px 10px; box-shadow: 5px 5px 0 var(--musgo-verde-sombra); }
+  .portada-box .portada-title { left: 10px; font-size:.62rem; }
+  .memes-panel { padding: 10px; box-shadow: 5px 5px 0 #310824; }
+  .memes-minis { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .meme-full-meta { flex-direction: column; align-items:flex-start; }
+}
+
+
+/* v0.14c — memes gana espacio propio */
+.musgo-nav .nav-memes {
+  color: #050505;
+  background: var(--rosa);
+  border: 1px solid var(--rosa);
+  padding: 3px 8px;
+  box-shadow: 3px 3px 0 #3b092c;
+}
+.musgo-nav .nav-memes:hover,
+.musgo-nav .nav-memes:focus-visible {
+  color: #050505;
+  background: #fff;
+  border-color: #fff;
+  text-decoration: none;
+}
+.memes-home-wrap {
+  max-width: 1400px;
+  margin: 22px auto 0;
+  scroll-margin-top: 10px;
+}
+.memes-home-wrap .memes-panel {
+  margin-bottom: 0;
+}
+.sustrato-wrap {
+  margin-top: 24px;
+}
+@media (max-width: 760px) {
+  .memes-home-wrap { margin-top: 18px; }
+}
+
+/* Biblioteca de memes alojada en GitHub Pages */
+.musgo-memes-frame {
+  display:block;
+  width:100%;
+  min-height:720px;
+  border:0;
+  background:transparent;
+  overflow:hidden;
+}
+@media (max-width:760px){
+  .musgo-memes-frame{min-height:780px;}
+}
+</style>
+</head><body>
+<header>
+<div class="fecha-recuadro" id="fechaActual">--/--/--</div>
+<h1>MUSGO</h1>
+</header>
+<div class="estado"><strong>última mutación:</strong> 03/08/26  ·  memes se ganó su propio espacio <span class="parpadeo">_</span></div><nav aria-label="Navegación de MUSGO" class="musgo-nav"><a href="#portada">PORTADA</a><span aria-hidden="true" class="nav-sep">·</span><a href="#entradas">ENTRADAS</a><span aria-hidden="true" class="nav-sep">·</span><a class="nav-memes" href="#memes">MEMES</a><span aria-hidden="true" class="nav-sep">·</span><a href="#sustrato">SUSTRATO</a></nav>
+<section aria-label="Últimos fragmentos del archivo" class="portada-feed portada-box" id="portada"><div class="portada-title">PORTADA</div>
+<figure class="pieza-micro">
+<img alt="Estructura verde observada a través de un microscopio" src="musgo-microscopio.webp"/>
+<figcaption><span>29/07</span>mirar una planta demasiado cerca</figcaption>
+</figure>
+<figure class="pieza-mono meme-frame portada-meme" id="meme-despierta-portada">
+<a aria-label="Abrir biblioteca de memes" href="#memes"><img alt="Meme sobre dejar el machine learning e ir a comer hormigas" src="musgo-meme-hormigas.webp"/></a>
+<figcaption><a class="portada-meme-link" href="#memes">ver memes ↘</a></figcaption>
+</figure>
+<figure class="pieza-luz">
+<img alt="Captura de lámparas antiguas hechas con metal perforado" src="musgo-lamparas-metal.webp"/>
+<figcaption><span>resto</span>hacer luz con una lata vieja</figcaption>
+</figure>
+</section><div id="entradas" style="position:relative; top:-6px; height:0; overflow:hidden;"></div><section class="entradas-wrap" id="post-hoy-v05"><h2 class="entradas-title">ENTRADAS</h2><article class="post" id="resistiendo-el-invierno">
+<div class="meta">02/08/26</div>
+<section aria-label="Fragmentos antes del título" class="pre-title">
+<aside aria-label="Adelanto del Santa Sara" class="santa-window">
+<a aria-label="Ir al adelanto del Santa Sara" href="#adelanto-santa-sara">
+<img alt="El Santa Sara, un barco aéreo de madera sobre un paisaje verde" src="musgo-santa-sara.webp"/>
+</a>
+<div class="santa-copy">
+<p>El Santa Sara avanzaba siguiendo el río, con su gran saco de gas tensado sobre el casco. Era una bolsa inmensa de tela remendada...</p>
+<a href="#adelanto-santa-sara">seguir leyendo →</a>
+</div>
+</aside>
+<figure class="winter-window">
+<img alt="Cultivos de invierno detrás de un cerco tejido con ramas" src="musgo-huerta-cerco.webp"/>
+</figure>
+</section>
+<h1>RESISTIENDO EL INVIERNO</h1>
+<figure class="hero">
+<img alt="Camino de barro entre camas de cultivo en una ladera durante el invierno" src="musgo-huerta-camino.webp"/>
+</figure>
+<div class="note">
+<p>Lo que alguna vez fue la huerta del verano. Ahora, aprovechando el invierno para experimentar y ver qué aguanta. Empezando a pensar la huerta de verano.</p>
+</div>
+<div aria-label="Interrupción visual" class="meme-banner"><a aria-label="Ver este meme en el archivo de memes" href="#meme-sapo"><figure class="meme-frame"><img alt="Meme de un sapo tocando charango junto a un lago" src="musgo-meme-sapo-charango.webp"/></figure></a></div><section aria-label="Detalles de la huerta de invierno" class="details-grid"><figure><img alt="Acelga creciendo dentro de un neumático reutilizado" src="musgo-acelga-neumatico.webp"/></figure><figure><img alt="Acelgas y otros cultivos resistiendo en una cama de la ladera" src="musgo-huerta-cama-ladera.webp"/></figure></section>
+</article><section aria-label="Adelanto del Santa Sara" class="fragment" id="adelanto-santa-sara"><p>El Santa Sara avanzaba siguiendo el río, con su gran saco de gas tensado sobre el casco. Era una bolsa inmensa de tela remendada, hinchada hasta volverse casi transparente en algunos sectores, sujeta por una red de cuerdas que crujía con cada cambio de viento. Más lejos navegaba un bote pequeño, apenas una plataforma de madera bajo un globo redondo, cargado con canastos y dos cabras inquietas.</p><p>Las granjas aparecían alrededor de los pueblos y después volvían a perderse entre bosque, cultivos y humedales. En una antigua torre cubierta de enredaderas funcionaba una estación de paso. Desde allí les hicieron señales para que bajaran y mostraran la carga.</p><p>Amapola respondió con una bandera distinta.</p><p>La primera significaba comercio. La segunda, que no tenían tiempo.</p><p>Después de una discusión breve, los dejaron continuar a cambio de llevar un saco sellado hasta la siguiente comunidad. Nadie preguntó qué contenía. En esas rutas, la confianza solía consistir en no hacer ciertas preguntas demasiado pronto.</p></section></section>
+<section aria-label="Entrada actual: Resistiendo el invierno" class="post-actual-v05" id="post-hoy-v05"></section>
+<section class="memes-home-wrap" id="memes"><iframe class="musgo-memes-frame" id="musgo-memes-frame" loading="lazy" src="https://dvasquezm96-ai.github.io/musgo-memes/" title="Biblioteca de memes de MUSGO"></iframe></section><main class="container sustrato-wrap" id="sustrato"><h2 class="sustrato-main-title">SUSTRATO</h2>
+<section class="column left-column">
+<div class="declaracion">
+        acá quedan las cosas antes de que tengan una explicación buena.
+      </div>
+<article class="blog-post" id="paranoico">
+<h3>Me estoy poniendo paranoico y no me molesta</h3>
+<p class="date">15/06/26</p>
+<p>
+          Creo q si o si estamos en una transición de una forma de comunicación,
+          transmisión y desarrollo de ideas. eso va de la mano del colapso de la
+          forma anterior (redes sociales, internet ultra regulado, influencers y
+          publicidad) y fijando los límites y buscando libertades en la forma que
+          se viene (IA). Yo no entiendo nada de computadores asiq no tengo idea
+          de donde agarrarme, pq la verdad estoy chato de la forma anterior.
+        </p>
+</article>
+<article class="blog-post">
+<h3>no ordenar todavía</h3>
+<p class="date">02/08/26</p>
+<p>
+          Estoy haciendo hartas cosas. No quiero convertirlas al tiro en
+          metodología, proyecto o producto. Por ahora quiero verlas juntas.
+        </p>
+</article>
+<div class="archive-section">
+<h3>archivo</h3>
+<ul class="archive-list">
+<li class="archive-item">
+<span class="archive-date">02/08/26</span>
+<a href="#resistiendo-el-invierno">➔ resistiendo el invierno</a>
+</li>
+<li class="archive-item">
+<span class="archive-date">02/08/26</span>
+<a href="#macetero-luz">➔ una lámpara sobre la ventana</a>
+</li>
+<li class="archive-item">
+<span class="archive-date">29/07/26</span>
+<a href="#demasiado-cerca">➔ demasiado cerca</a>
+</li>
+<li class="archive-item">
+<span class="archive-date">16/07/26</span>
+<a href="#muro-lluvia">➔ el muro bajo la lluvia</a>
+</li>
+<li class="archive-item">
+<span class="archive-date">02/07/26</span>
+<a href="#agua-negra">➔ agua negra</a>
+</li>
+<li class="archive-item">
+<span class="archive-date">22/06/26</span>
+<a href="#pc">➔ nunca he desarmado un pc</a>
+</li>
+</ul>
+</div>
+</section>
+<section class="column center-column">
+<details class="post-card" id="macetero-luz">
+<summary>
+<div class="post-date">02/08/26</div>
+<span class="post-title">UNA LÁMPARA SOBRE LA VENTANA</span>
+<img alt="Maceteros y esquejes bajo una lámpara frente a una ventana" class="post-preview" loading="lazy" src="musgo-maceteros-luz.webp"/>
+</summary>
+<div class="post-content">
+<img alt="Maceteros y esquejes bajo una lámpara frente a una ventana" loading="lazy" src="musgo-maceteros-luz.webp"/>
+<p>
+            una lámpara colgando sobre el borde de una ventana y varias plantas tratando de convertirse en sistema.
+          </p>
+<p>
+            todavía no sé si esto es un macetero modular, un ensayo doméstico o simplemente una buena escena.
+          </p>
+<p class="susurro">
+            luz prestada para un pedazo chico de futuro.
+          </p>
+</div>
+</details>
+<details class="post-card" id="demasiado-cerca">
+<summary>
+<div class="post-date">29/07/26</div>
+<span class="post-title">DEMASIADO CERCA</span>
+<img alt="Estructura verde observada a través de un microscopio" class="post-preview vertical" loading="lazy" src="musgo-microscopio.webp"/>
+</summary>
+<div class="post-content">
+<img alt="Estructura verde observada a través de un microscopio" loading="lazy" src="musgo-microscopio.webp"/>
+<p>
+            miré una planta demasiado cerca y por un rato dejó de parecer una planta.
+          </p>
+<p class="susurro">
+            también se puede entrar a un paisaje por un círculo de luz.
+          </p>
+</div>
+</details>
+<details class="post-card" id="muro-lluvia">
+<summary>
+<div class="post-date">16/07/26</div>
+<span class="post-title">EL MURO BAJO LA LLUVIA</span>
+<img alt="Muro de escalada casero mojado, cubierto parcialmente con plástico" class="post-preview" loading="lazy" src="musgo-muro-lluvia.webp"/>
+</summary>
+<div class="post-content">
+<img alt="Muro de escalada casero mojado, cubierto parcialmente con plástico" loading="lazy" src="musgo-muro-lluvia.webp"/>
+<p>
+            este es mi rincón de escalada, tal y como yo lo veo.
+          </p>
+<p>
+            mojado, las colchonetas tiradas y el plástico puesto a medias.
+          </p>
+<p class="susurro">
+            las cosas que uno construye también pasan temporadas abandonadas.
+          </p>
+</div>
+</details>
+<details class="post-card" id="agua-negra">
+<summary>
+<div class="post-date">02/07/26</div>
+<span class="post-title">AGUA NEGRA / 00:16</span>
+<img alt="Vista previa de un tambor azul lleno de agua oscura" class="post-preview" loading="lazy" src="musgo-agua-negra.webp"/>
+</summary>
+<div class="post-content">
+<a class="video-enlace" href="https://drive.google.com/file/d/1pXHo3youVEVYvi8viPtQMSGwkKnAAGL4/view" rel="noopener" target="_blank">
+<img alt="Vista previa de agua negra" loading="lazy" src="musgo-agua-negra.webp"/>
+<span>▶ abrir el video en Drive</span>
+</a>
+<p>
+            un tambor azul. agua oscura. meto la mano. no ocurre nada.
+          </p>
+<p class="susurro">
+            igual lo grabé.
+          </p>
+</div>
+</details>
+<details class="post-card" id="pc">
+<summary>
+<div class="post-date">22/06/26</div>
+<span class="post-title">NUNCAHEDESARMADOUNPC</span>
+<div class="text-preview">
+            yo no entendía nada de computadores. ahora tampoco, pero abrí uno.
+          </div>
+</summary>
+<div class="post-content">
+<div class="missing-media">[foto del PC todavía no incorporada]</div>
+<p>
+            cuando era chico empesaron a haber los primeros PC en las casas, yo
+            siempre fui super huaso para esas cosas, no entendia nada de lo que
+            hablaban y hacian mis amigos.
+          </p>
+<p>
+            ellos siempore entendian los programas y sabian bajar juegos y weas.
+            a mi una vez me instalaron el Ares y asi sobrevivi mi adolecencia a
+            pura musiquita nomas.
+          </p>
+<div class="missing-media">[segunda foto del PC todavía no incorporada]</div>
+<p>
+            despues ellos empesaron a meterle mano a los PC y yo que aun no
+            sabia descargar niun juego, obviamente asumi q ese no era mi mundo.
+          </p>
+<p>
+            ahora, 20 años despues, aqui estoy, armado de chatgpt, intentando
+            entender q mierda son estos chips y estos clabes de mi note viejo y
+            intentando entender q mierda es Linux y preocupado de como chucha voy
+            a rearmar esta wea xD
+          </p>
+<p>(ya no se usa el xd, cierto ?)</p>
+</div>
+</details>
+<details class="post-card">
+<summary>
+<div class="post-date">22/06/26</div>
+<span class="post-title">CASABULDER</span>
+<img alt="Muro de escalada casero" class="post-preview" loading="lazy" src="musgo-muro-lluvia.webp"/>
+</summary>
+<div class="post-content">
+<img alt="Muro de escalada casero" loading="lazy" src="musgo-muro-lluvia.webp"/>
+<p>
+            Hoy en dia el internet esta en manos de puras fotos profesionales y
+            de productos. Puras weas perfectas y donde el fin es presentar un
+            producto.
+          </p>
+<p>este es mi rincon de escalada, tal y como yo lo veo</p>
+</div>
+</details>
+</section>
+<aside class="right-column">
+<div class="box">
+<figure class="fragmento">
+<img alt="Captura de referencia con lámparas antiguas de metal perforado" loading="lazy" src="musgo-lamparas-metal.webp"/>
+<figcaption>
+            algún día quiero hacer una de estas weas con una lata vieja.
+          </figcaption>
+</figure>
+<figure class="fragmento">
+<img alt="Meme: Despierta bro, machine learning, no bro, vayamos a comer hormigas" loading="lazy" src="musgo-meme-hormigas.webp"/>
+<figcaption>
+            plan de adaptación tecnológica.
+          </figcaption>
+</figure>
+<p class="marca">capturas guardadas sin contexto suficiente.</p>
+</div>
+<div class="box">
+<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="" class="youtube-frame" loading="lazy" src="https://www.youtube.com/embed/RLiqJNUk1xg" title="Canción del día">
+</iframe>
+</div>
+</aside>
+</main>
+<footer>
+<span>MUSGO / versión 0.10</span>
+<span>hecho con archivos sueltos</span>
+</footer>
+<script>
+    function obtenerFechaActual() {
+      const hoy = new Date();
+      const dia = String(hoy.getDate()).padStart(2, "0");
+      const mes = String(hoy.getMonth() + 1).padStart(2, "0");
+      const anio = String(hoy.getFullYear()).slice(-2);
+
+      document.getElementById("fechaActual").textContent =
+        `${dia}/${mes}/${anio}`;
+    }
+
+    function reemplazarImagenesPerdidas() {
+      document.querySelectorAll("img.archivo-antiguo").forEach((imagen) => {
+        imagen.addEventListener("error", () => {
+          const aviso = document.createElement("div");
+          aviso.className = "missing-media";
+          aviso.textContent =
+            `[imagen antigua no incluida en esta copia: ${imagen.getAttribute("src")}]`;
+          imagen.replaceWith(aviso);
+        }, { once: true });
+      });
+    }
+
+    obtenerFechaActual();
+    reemplazarImagenesPerdidas();
+
+    document.querySelectorAll('.abrir-fragmento').forEach((enlace) => {
+      enlace.addEventListener('click', () => {
+        const fragmento = document.getElementById('santa-sara');
+        if (fragmento) fragmento.open = true;
+      });
+    });
+
+  </script><script>
+async function cargarMemesDesdeGitHub() {
+  const panel=document.getElementById('memes');
+  if(!panel)return;
+  panel.innerHTML=`
+    <div class="memes-panel-head"><h2 class="memes-panel-title">MEMES</h2><span class="meme-count-lite" id="meme-count-lite">cargando...</span></div>
+    <div class="memes-minis" id="memes-minis"><span class="meme-count-lite">buscando memes...</span></div>
+    <details class="memes-foldout" id="memes-completo"><summary class="memes-summary">ver todos los memes ↓</summary>
+      <div class="memes-full"><div class="memes-oldschool-top"><span class="blinkish">memes</span><span class="memes-oldschool-note">archivo viejo escuela</span></div>
+      <div id="memes-lista"></div><div class="memes-oldschool-bottom"><a href="#memes">volver arriba ↑</a></div></div>
+    </details>`;
+  const minis=document.getElementById('memes-minis');
+  const lista=document.getElementById('memes-lista');
+  const contador=document.getElementById('meme-count-lite');
+  const extensiones=/\.(png|jpe?g|webp|gif|avif)$/i;
+  const respaldo=[
+    {name:'musgo-meme-sapo-charango.webp',download_url:'musgo-meme-sapo-charango.webp'},
+    {name:'musgo-meme-hormigas.webp',download_url:'musgo-meme-hormigas.webp'}
+  ];
+  function mini(item){
+    const a=document.createElement('a');a.className='mini-meme';a.href='#memes-completo';a.title=item.name;
+    const img=document.createElement('img');img.src=item.download_url;img.alt=item.name;img.loading='lazy';a.appendChild(img);return a;
+  }
+  function ficha(item,n){
+    const art=document.createElement('article');art.className='meme-card-full';
+    const seq=document.createElement('div');seq.className='meme-seq';seq.textContent=String(n).padStart(2,'0');
+    const a=document.createElement('a');a.className='meme-full-image-link';a.href=item.download_url;a.target='_blank';a.rel='noopener';
+    const img=document.createElement('img');img.src=item.download_url;img.alt=item.name;img.loading='lazy';a.appendChild(img);
+    const meta=document.createElement('div');meta.className='meme-full-meta';
+    const nombre=document.createElement('span');nombre.className='meme-date';nombre.textContent=item.name;
+    const abrir=document.createElement('a');abrir.href=item.download_url;abrir.target='_blank';abrir.rel='noopener';abrir.textContent='abrir imagen ↗';
+    meta.append(nombre,abrir);art.append(seq,a,meta);return art;
+  }
   try{
     const r=await fetch('https://api.github.com/repos/dvasquezm96-ai/musgo-memes/contents/memes?ref=main',{cache:'no-store'});
     const data=r.ok?await r.json():[];
-    const subidos=data.filter(x=>x.type==='file'&&extensiones.test(x.name)).sort((a,b)=>b.name.localeCompare(a.name));
+    const subidos=Array.isArray(data)?data.filter(x=>x.type==='file'&&extensiones.test(x.name)).sort((a,b)=>b.name.localeCompare(a.name)):[];
     const nombres=new Set(subidos.map(x=>x.name));
-    const items=[...subidos,...semillas.filter(x=>!nombres.has(x.name))];
-    recientes.innerHTML='';galeria.innerHTML='';
-    if(!items.length){recientes.innerHTML='<div class="estado">todavía no hay memes</div>';return;}
-    items.slice(0,6).forEach(x=>recientes.appendChild(tarjeta(x,true)));
-    items.forEach(x=>galeria.appendChild(tarjeta(x,false)));
-  }catch(e){
-    recientes.innerHTML='';galeria.innerHTML='';
-    semillas.forEach(x=>recientes.appendChild(tarjeta(x,true)));
-    semillas.forEach(x=>galeria.appendChild(tarjeta(x,false)));
+    const items=[...subidos,...respaldo.filter(x=>!nombres.has(x.name))];
+    minis.innerHTML='';lista.innerHTML='';contador.textContent=`${String(items.length).padStart(2,'0')} piezas`;
+    items.slice(0,6).forEach(x=>minis.appendChild(mini(x)));
+    items.forEach((x,i)=>lista.appendChild(ficha(x,i+1)));
+  }catch(error){
+    minis.innerHTML='';lista.innerHTML='';contador.textContent='02 piezas';
+    respaldo.forEach(x=>minis.appendChild(mini(x)));respaldo.forEach((x,i)=>lista.appendChild(ficha(x,i+1)));
   }
 }
-abrir.addEventListener('click',()=>{
-  archivo.classList.toggle('abierto');
-  abrir.textContent=archivo.classList.contains('abierto')?'CERRAR ARCHIVO':'ABRIR ARCHIVO COMPLETO';
-});
-cargar();
+cargarMemesDesdeGitHub();
 </script>
 </body>
 </html>
