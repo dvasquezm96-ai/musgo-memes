@@ -4,6 +4,7 @@ from urllib.request import Request, urlopen
 import re
 
 BASE = 'https://chicxmusgo.neocities.org/'
+API_MEMES = 'https://api.github.com/repos/dvasquezm96-ai/musgo-memes/contents/memes?ref=main'
 
 
 def bajar(url: str) -> bytes:
@@ -33,33 +34,22 @@ for recurso in recursos:
     except Exception as error:
         print('No se pudo copiar', url, error)
 
-# Mantener MEMES como módulo vivo leído desde musgo-memes/main.
-API_MEMES = 'https://api.github.com/repos/dvasquezm96-ai/musgo-memes/contents/memes?ref=main'
+# MEMES reemplaza su contenido al abrir la página, sin depender del HTML exacto de Neocities.
 if API_MEMES not in html:
-    seccion = '''<section class="memes-home-wrap"><section class="memes-panel" id="memes">
-<div class="memes-panel-head"><h2 class="memes-panel-title">MEMES</h2><span class="meme-count-lite" id="meme-count-lite">cargando...</span></div>
-<div class="memes-minis" id="memes-minis"><span class="meme-count-lite">buscando memes...</span></div>
-<details class="memes-foldout" id="memes-completo"><summary class="memes-summary">ver todos los memes ↓</summary>
-<div class="memes-full"><div class="memes-oldschool-top"><span class="blinkish">memes</span><span class="memes-oldschool-note">archivo viejo escuela</span></div>
-<div id="memes-lista"></div>
-<div class="memes-oldschool-bottom"><a href="#memes">volver arriba ↑</a></div></div></details>
-</section></section>'''
-    html, cambios = re.subn(
-        r'<section class="memes-home-wrap">.*?</section></section><main class="container sustrato-wrap"',
-        seccion + '<main class="container sustrato-wrap"',
-        html,
-        count=1,
-        flags=re.S,
-    )
-    if cambios != 1:
-        raise RuntimeError('No se encontró la sección MEMES para volverla dinámica')
-
     js = r'''
 async function cargarMemesDesdeGitHub() {
+  const panel=document.getElementById('memes');
+  if(!panel)return;
+  panel.innerHTML=`
+    <div class="memes-panel-head"><h2 class="memes-panel-title">MEMES</h2><span class="meme-count-lite" id="meme-count-lite">cargando...</span></div>
+    <div class="memes-minis" id="memes-minis"><span class="meme-count-lite">buscando memes...</span></div>
+    <details class="memes-foldout" id="memes-completo"><summary class="memes-summary">ver todos los memes ↓</summary>
+      <div class="memes-full"><div class="memes-oldschool-top"><span class="blinkish">memes</span><span class="memes-oldschool-note">archivo viejo escuela</span></div>
+      <div id="memes-lista"></div><div class="memes-oldschool-bottom"><a href="#memes">volver arriba ↑</a></div></div>
+    </details>`;
   const minis=document.getElementById('memes-minis');
   const lista=document.getElementById('memes-lista');
   const contador=document.getElementById('meme-count-lite');
-  if(!minis||!lista||!contador)return;
   const extensiones=/\.(png|jpe?g|webp|gif|avif)$/i;
   const respaldo=[
     {name:'musgo-meme-sapo-charango.webp',download_url:'musgo-meme-sapo-charango.webp'},
@@ -80,7 +70,7 @@ async function cargarMemesDesdeGitHub() {
     meta.append(nombre,abrir);art.append(seq,a,meta);return art;
   }
   try{
-    const r=await fetch(''' + repr(API_MEMES) + r''',{cache:'no-store'});
+    const r=await fetch('https://api.github.com/repos/dvasquezm96-ai/musgo-memes/contents/memes?ref=main',{cache:'no-store'});
     const data=r.ok?await r.json():[];
     const subidos=Array.isArray(data)?data.filter(x=>x.type==='file'&&extensiones.test(x.name)).sort((a,b)=>b.name.localeCompare(a.name)):[];
     const nombres=new Set(subidos.map(x=>x.name));
