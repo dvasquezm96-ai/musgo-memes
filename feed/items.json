@@ -1,0 +1,44 @@
+[
+  {
+    "id": "el-barco-sobre-los-duraznos",
+    "order": 100,
+    "date": "03/08/26",
+    "kind": "cuento",
+    "size": 4,
+    "title": "El barco sobre los duraznos",
+    "excerpt": "El barco llevaba cuatro días suspendido sobre los duraznos. Al cuarto día buscaron a Bruna.",
+    "image": "assets/el-barco-sobre-los-duraznos.webp",
+    "href": "posts/el-barco-sobre-los-duraznos.html"
+  },
+  {
+    "id": "resistiendo-invierno",
+    "order": 90,
+    "date": "02/08/26",
+    "kind": "huerta",
+    "size": 2,
+    "title": "Resistiendo el invierno",
+    "excerpt": "Lo que alguna vez fue la huerta del verano.",
+    "image": "musgo-huerta-camino.webp",
+    "href": "#resistiendo-el-invierno"
+  },
+  {
+    "id": "demasiado-cerca",
+    "order": 80,
+    "date": "29/07/26",
+    "kind": "detalle",
+    "size": 1,
+    "title": "Demasiado cerca",
+    "image": "musgo-microscopio.webp",
+    "href": "#demasiado-cerca"
+  },
+  {
+    "id": "lata-vieja",
+    "order": 70,
+    "date": "resto",
+    "kind": "imagen",
+    "size": 1,
+    "title": "Hacer luz con una lata vieja",
+    "image": "musgo-lamparas-metal.webp",
+    "href": "#sustrato"
+  }
+]
