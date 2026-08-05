@@ -1,0 +1,34 @@
+name: Simplificar entradas una vez
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  simplificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Aplicar grilla flexible al borrador
+        run: |
+          git fetch origin musgo-site-draft
+          git switch musgo-site-draft
+          python tools/simplify_feed.py
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html feed/items.json
+          git commit -m "Cambiar Tetris por grilla flexible [skip ci]"
+          git push origin musgo-site-draft
+      - name: Retirar trabajo temporal
+        run: |
+          git switch main
+          git pull --ff-only origin main
+          git rm .github/workflows/simplify-feed-once.yml
+          git commit -m "Retirar simplificador temporal [skip ci]"
+          git push origin main
