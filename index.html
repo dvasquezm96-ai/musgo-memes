@@ -1925,56 +1925,14 @@
 }
 
 
-/* FLUJO TETRIS — contenido separado del código principal */
-.flujo-wrap {
-  max-width: 760px;
-  margin: 20px auto 22px;
-  padding: 10px;
-  border: 2px solid var(--musgo-verde, #6b9c33);
-  background: linear-gradient(145deg, rgba(107,156,51,.08), transparent 38%), #050505;
-  box-shadow: 7px 7px 0 var(--musgo-verde-sombra, #243712);
-  scroll-margin-top: 10px;
-}
-.flujo-head { display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:9px; }
-.flujo-head h2 { color:var(--musgo-verde,#6b9c33); font-size:.78rem; font-weight:normal; letter-spacing:.2em; }
-.flujo-head span { color:#686868; font-size:.58rem; letter-spacing:.08em; }
-.flujo-grid {
-  --flujo-gap: 7px;
-  --flujo-cell: 180px;
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  grid-auto-rows:var(--flujo-cell);
-  grid-auto-flow:dense;
-  gap:var(--flujo-gap);
-}
-.flujo-item { position:relative; min-width:0; min-height:0; overflow:hidden; border:1px solid #343434; background:#090909; }
-.flujo-item[data-size="1"] { grid-column:span 1; grid-row:span 1; }
-.flujo-item[data-size="2"] { grid-column:span 2; grid-row:span 1; }
-.flujo-item[data-size="2"][data-shape="vertical"] { grid-column:span 1; grid-row:span 2; }
-.flujo-item[data-size="4"] { grid-column:span 2; grid-row:span 2; }
-.flujo-item[data-size="8"] { grid-column:span 2; grid-row:span 4; }
-.flujo-item > a { display:block; width:100%; height:100%; color:inherit; text-decoration:none; }
-.flujo-item img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .18s ease,filter .18s ease; filter:saturate(.82) contrast(1.04); }
-.flujo-item:hover img { transform:scale(1.018); filter:saturate(1) contrast(1.02); }
-.flujo-copy { position:absolute; inset:auto 0 0; padding:34px 9px 8px; background:linear-gradient(transparent,rgba(0,0,0,.94)); pointer-events:none; }
-.flujo-meta { color:var(--musgo-verde,#6b9c33); font-size:.57rem; letter-spacing:.09em; text-transform:uppercase; }
-.flujo-title { color:#f0f0eb; font-size:clamp(.7rem,2.8vw,1.1rem); line-height:1.18; font-weight:normal; margin-top:3px; }
-.flujo-excerpt { color:#b6b6b0; font-family:Georgia,"Times New Roman",serif; font-size:.72rem; line-height:1.35; margin-top:5px; max-width:38rem; }
-.flujo-item[data-size="1"] .flujo-excerpt { display:none; }
-.flujo-item[data-size="1"] .flujo-title { font-size:.66rem; }
-.flujo-filler {
-  display:grid; place-items:center; border:1px dashed #344626;
-  background:linear-gradient(45deg,transparent 46%,rgba(107,156,51,.16) 47% 53%,transparent 54%),radial-gradient(circle at 30% 30%,rgba(255,102,204,.12),transparent 45%),#060606;
-  color:#567b2d; font-size:clamp(1rem,8vw,2.1rem); letter-spacing:.15em;
-}
-.flujo-filler small { font-size:.5rem; color:#526246; writing-mode:vertical-rl; }
-@media(max-width:760px){
-  .flujo-wrap{margin-top:16px;padding:7px;box-shadow:5px 5px 0 var(--musgo-verde-sombra,#243712)}
-  .flujo-head span{display:none}
-  .flujo-grid{--flujo-gap:5px}
-  .flujo-copy{padding:27px 7px 6px}
-  .flujo-excerpt{font-size:.65rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-}
+/* FLUJO FLEXIBLE — publicaciones chicas, medianas y grandes */
+.flujo-wrap{max-width:760px;margin:20px auto 22px;padding:10px;border:2px solid var(--musgo-verde,#6b9c33);background:linear-gradient(145deg,rgba(107,156,51,.08),transparent 38%),#050505;box-shadow:7px 7px 0 var(--musgo-verde-sombra,#243712);scroll-margin-top:10px}
+.flujo-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:9px}.flujo-head h2{color:var(--musgo-verde,#6b9c33);font-size:.78rem;font-weight:normal;letter-spacing:.2em}.flujo-head span{color:#686868;font-size:.58rem;letter-spacing:.08em}
+.flujo-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;align-items:stretch}
+.flujo-item{position:relative;min-width:0;overflow:hidden;border:1px solid #343434;background:#090909}.flujo-item[data-size="small"]{grid-column:span 1;aspect-ratio:1/1}.flujo-item[data-size="medium"]{grid-column:1/-1;aspect-ratio:2/1;min-height:170px}.flujo-item[data-size="large"]{grid-column:1/-1;aspect-ratio:4/3;min-height:290px}
+.flujo-item>a{display:block;width:100%;height:100%;color:inherit;text-decoration:none}.flujo-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .18s ease,filter .18s ease;filter:saturate(.82) contrast(1.04)}.flujo-item:hover img{transform:scale(1.018);filter:saturate(1) contrast(1.02)}
+.flujo-copy{position:absolute;inset:auto 0 0;padding:34px 9px 8px;background:linear-gradient(transparent,rgba(0,0,0,.94));pointer-events:none}.flujo-meta{color:var(--musgo-verde,#6b9c33);font-size:.57rem;letter-spacing:.09em;text-transform:uppercase}.flujo-title{color:#f0f0eb;font-size:clamp(.7rem,2.8vw,1.1rem);line-height:1.18;font-weight:normal;margin-top:3px}.flujo-excerpt{color:#b6b6b0;font-family:Georgia,"Times New Roman",serif;font-size:.72rem;line-height:1.35;margin-top:5px;max-width:38rem}.flujo-item[data-size="small"] .flujo-excerpt{display:none}.flujo-item[data-size="small"] .flujo-title{font-size:.66rem}
+@media(max-width:760px){.flujo-wrap{margin-top:16px;padding:7px;box-shadow:5px 5px 0 var(--musgo-verde-sombra,#243712)}.flujo-head span{display:none}.flujo-grid{gap:5px}.flujo-copy{padding:24px 7px 6px}.flujo-item[data-size="medium"]{min-height:145px}.flujo-item[data-size="large"]{min-height:250px}.flujo-item[data-size="large"] .flujo-title{font-size:.9rem}.flujo-excerpt{font-size:.65rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}}
 
 </style>
 </head><body>
@@ -1982,7 +1940,7 @@
 <div class="fecha-recuadro" id="fechaActual">--/--/--</div>
 <h1>MUSGO</h1>
 </header>
-<div class="estado"><strong>última mutación:</strong> 03/08/26  ·  las entradas aprendieron a encajar <span class="parpadeo">_</span></div><nav aria-label="Navegación de MUSGO" class="musgo-nav"><a href="#portada">PORTADA</a><span aria-hidden="true" class="nav-sep">·</span><a href="#entradas">ENTRADAS</a><span aria-hidden="true" class="nav-sep">·</span><a class="nav-memes" href="#memes">MEMES</a><span aria-hidden="true" class="nav-sep">·</span><a href="#sustrato">SUSTRATO</a></nav>
+<div class="estado"><strong>última mutación:</strong> 03/08/26  ·  las entradas encontraron su ritmo <span class="parpadeo">_</span></div><nav aria-label="Navegación de MUSGO" class="musgo-nav"><a href="#portada">PORTADA</a><span aria-hidden="true" class="nav-sep">·</span><a href="#entradas">ENTRADAS</a><span aria-hidden="true" class="nav-sep">·</span><a class="nav-memes" href="#memes">MEMES</a><span aria-hidden="true" class="nav-sep">·</span><a href="#sustrato">SUSTRATO</a></nav>
 <section aria-label="Últimos fragmentos del archivo" class="portada-feed portada-box" id="portada"><div class="portada-title">PORTADA</div>
 <figure class="pieza-micro">
 <img alt="Estructura verde observada a través de un microscopio" src="musgo-microscopio.webp"/>
@@ -1997,7 +1955,7 @@
 <figcaption><span>resto</span>hacer luz con una lata vieja</figcaption>
 </figure>
 </section><section class="flujo-wrap" id="entradas">
-<div class="flujo-head"><h2>ENTRADAS</h2><span>1 · 2 · 4 · 8 cuerpos</span></div>
+<div class="flujo-head"><h2>ENTRADAS</h2><span>chica · mediana · grande</span></div>
 <div class="flujo-grid" id="flujo-grid" aria-live="polite"></div>
 </section><section class="entradas-wrap" id="post-hoy-v05"><h2 class="entradas-title">ENTRADAS</h2><article class="post" id="resistiendo-el-invierno">
 <div class="meta">02/08/26</div>
@@ -2316,26 +2274,12 @@ cargarMemesDesdeGitHub();
 
 <script>
 (() => {
-  const grid = document.getElementById('flujo-grid');
-  if (!grid) return;
-  const fallback = [{"id": "el-barco-sobre-los-duraznos", "order": 100, "date": "03/08/26", "kind": "cuento", "size": 4, "title": "El barco sobre los duraznos", "excerpt": "El barco llevaba cuatro días suspendido sobre los duraznos. Al cuarto día buscaron a Bruna.", "image": "assets/el-barco-sobre-los-duraznos.webp", "href": "posts/el-barco-sobre-los-duraznos.html"}, {"id": "resistiendo-invierno", "order": 90, "date": "02/08/26", "kind": "huerta", "size": 2, "title": "Resistiendo el invierno", "excerpt": "Lo que alguna vez fue la huerta del verano.", "image": "musgo-huerta-camino.webp", "href": "#resistiendo-el-invierno"}, {"id": "demasiado-cerca", "order": 80, "date": "29/07/26", "kind": "detalle", "size": 1, "title": "Demasiado cerca", "image": "musgo-microscopio.webp", "href": "#demasiado-cerca"}, {"id": "lata-vieja", "order": 70, "date": "resto", "kind": "imagen", "size": 1, "title": "Hacer luz con una lata vieja", "image": "musgo-lamparas-metal.webp", "href": "#sustrato"}];
-  const marks = ['✦','MUSGO','⌁','⋮'];
-  function ajustar(){ const gap=parseFloat(getComputedStyle(grid).gap)||0; grid.style.setProperty('--flujo-cell',`${(grid.clientWidth-gap)/2}px`); }
-  new ResizeObserver(ajustar).observe(grid); ajustar();
-  function tarjeta(item){
-    const art=document.createElement('article'); art.className='flujo-item';
-    art.dataset.size=String([1,2,4,8].includes(Number(item.size))?Number(item.size):1);
-    if(item.shape)art.dataset.shape=item.shape; art.id=`flujo-${item.id}`;
-    const a=document.createElement('a');a.href=item.href||'#';
-    const img=document.createElement('img');img.src=item.image;img.alt=item.title||'';img.loading='lazy';
-    const copy=document.createElement('div');copy.className='flujo-copy';
-    const meta=document.createElement('div');meta.className='flujo-meta';meta.textContent=[item.date,item.kind].filter(Boolean).join(' · ');
-    const h=document.createElement('h3');h.className='flujo-title';h.textContent=item.title||'sin título';copy.append(meta,h);
-    if(item.excerpt){const p=document.createElement('p');p.className='flujo-excerpt';p.textContent=item.excerpt;copy.appendChild(p)}
-    a.append(img,copy);art.appendChild(a);return art;
-  }
-  function relleno(n){const art=document.createElement('div');art.className='flujo-item flujo-filler';art.dataset.size='1';art.setAttribute('aria-hidden','true');const mark=document.createElement(n%2?'small':'span');mark.textContent=marks[n%marks.length];art.appendChild(mark);return art}
-  function pintar(data){grid.innerHTML='';const list=[...data].sort((a,b)=>(b.order||0)-(a.order||0));list.forEach(x=>grid.appendChild(tarjeta(x)));const bodies=list.reduce((n,x)=>n+([1,2,4,8].includes(Number(x.size))?Number(x.size):1),0);const missing=(8-(bodies%8))%8;for(let i=0;i<missing;i++)grid.appendChild(relleno(i));requestAnimationFrame(ajustar)}
+  const grid=document.getElementById('flujo-grid');
+  if(!grid)return;
+  const fallback=[{"id": "el-barco-sobre-los-duraznos", "order": 100, "date": "03/08/26", "kind": "cuento", "size":"large", "title": "El barco sobre los duraznos", "excerpt": "El barco llevaba cuatro días suspendido sobre los duraznos. Al cuarto día buscaron a Bruna.", "image": "assets/el-barco-sobre-los-duraznos.webp", "href": "posts/el-barco-sobre-los-duraznos.html"}, {"id": "resistiendo-invierno", "order": 90, "date": "02/08/26", "kind": "huerta", "size":"medium", "title": "Resistiendo el invierno", "excerpt": "Lo que alguna vez fue la huerta del verano.", "image": "musgo-huerta-camino.webp", "href": "#resistiendo-el-invierno"}, {"id": "demasiado-cerca", "order": 80, "date": "29/07/26", "kind": "detalle", "size":"small", "title": "Demasiado cerca", "image": "musgo-microscopio.webp", "href": "#demasiado-cerca"}, {"id": "lata-vieja", "order": 70, "date": "resto", "kind": "imagen", "size":"small", "title": "Hacer luz con una lata vieja", "image": "musgo-lamparas-metal.webp", "href": "#sustrato"}];
+  function tamano(v){v=String(v??'').toLowerCase();if(['1','small','chica','chico'].includes(v))return'small';if(['2','medium','mediana','mediano'].includes(v))return'medium';if(['4','8','large','grande'].includes(v))return'large';return'small'}
+  function tarjeta(item){const art=document.createElement('article');art.className='flujo-item';art.dataset.size=tamano(item.size);art.id=`flujo-${item.id}`;const a=document.createElement('a');a.href=item.href||'#';const img=document.createElement('img');img.src=item.image;img.alt=item.title||'';img.loading='lazy';const copy=document.createElement('div');copy.className='flujo-copy';const meta=document.createElement('div');meta.className='flujo-meta';meta.textContent=[item.date,item.kind].filter(Boolean).join(' · ');const h=document.createElement('h3');h.className='flujo-title';h.textContent=item.title||'sin título';copy.append(meta,h);if(item.excerpt){const p=document.createElement('p');p.className='flujo-excerpt';p.textContent=item.excerpt;copy.appendChild(p)}a.append(img,copy);art.appendChild(a);return art}
+  function pintar(items){grid.innerHTML='';[...items].sort((a,b)=>(b.order||0)-(a.order||0)).forEach(x=>grid.appendChild(tarjeta(x)))}
   fetch('feed/items.json',{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject()).then(pintar).catch(()=>pintar(fallback));
 })();
 </script>
